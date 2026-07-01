@@ -1,64 +1,127 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Fraunces, Work_Sans, IBM_Plex_Mono } from "next/font/google";
 import {
   CheckCircle2,
-  Award,
   ShieldCheck,
   GraduationCap,
   MapPin,
   Phone,
-  Sparkles,
   ArrowRight,
   Clock,
   Users,
-  BookOpen,
   Mail,
   ExternalLink,
-  Building2,
-  Target,
-  Trophy,
-  Zap,
+  ScrollText,
+  Stamp,
+  Sprout,
+  Stethoscope,
+  Award,
+  ClipboardList,
+  BookOpen,
 } from "lucide-react";
-import ApplicationForm from "@/components/ApplicationForm";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import ApplicationModal from "@/components/ApplicationModal";
+
+const display = Fraunces({
+  subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-display",
+});
+const body = Work_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-body",
+});
+const mono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
+});
+
+/** Reveals an element with a rise + fade once it enters the viewport. */
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisible(true);
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, visible };
+}
+
+function Reveal({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const { ref, visible } = useReveal<HTMLDivElement>();
+  return (
+    <div
+      ref={ref}
+      className={`reveal ${visible ? "reveal-in" : ""} ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
 
 export default function Home() {
   const features = [
     {
-      icon: Award,
+      icon: Stethoscope,
       title: "Advanced Animal Health",
-      description: "Comprehensive training in animal treatment and care",
+      description: "Diagnosis, treatment and preventative care for livestock.",
+      tilt: "-rotate-1",
     },
     {
-      icon: Target,
+      icon: Sprout,
       title: "Precision Agriculture",
-      description: "Modern farming techniques and crop management",
+      description: "Modern crop management and soil-first farming methods.",
+      tilt: "rotate-1",
     },
     {
-      icon: Trophy,
+      icon: Award,
       title: "Industry Certification",
-      description: "Recognized credentials for career advancement",
+      description: "A credential employers in the sector actually recognise.",
+      tilt: "-rotate-1",
     },
   ];
 
   const requirements = [
     {
       icon: ShieldCheck,
+      code: "REQ.01",
       title: "Age Bracket & Identity",
       description: "Applicants must be between the ages of 18 and 35 years.",
-      gradient: "from-emerald-50 to-teal-50",
-      border: "border-emerald-200/50",
     },
     {
       icon: GraduationCap,
+      code: "REQ.02",
       title: "Academic Prerequisites",
       description: "Required to possess any one of the following qualifications:",
       items: [
@@ -66,11 +129,10 @@ export default function Home() {
         "Federal Craft Certificate",
         "National Technical Certificate in any relevant trade area",
       ],
-      gradient: "from-blue-50 to-cyan-50",
-      border: "border-blue-200/50",
     },
     {
-      icon: CheckCircle2,
+      icon: ScrollText,
+      code: "REQ.03",
       title: "Mandatory Prerequisite Course",
       description:
         "Must have completed the AI Fluency Course on the International Organisation of Employers (IOE) Learning Platform.",
@@ -78,173 +140,254 @@ export default function Home() {
         href: "https://bit.ly/IOE-NECA-AI-FLUENCY",
         text: "Complete AI Fluency Course",
       },
-      gradient: "from-purple-50 to-pink-50",
-      border: "border-purple-200/50",
     },
   ];
 
-  const courseHighlights = [
-    "Advanced Animal Health & Treatment",
-    "Precision Agriculture & Crop Health",
-    "Agro-Nutrition & Soil Management",
-    "Industry-Relevant Agro-Vet Technical Skills",
+  const journey = [
+    { icon: ClipboardList, label: "Enrol", note: "Submit your application" },
+    { icon: BookOpen, label: "Learn", note: "Classroom & field theory" },
+    { icon: Sprout, label: "Practice", note: "Hands-on farm & clinic work" },
+    { icon: Award, label: "Certify", note: "Sit for assessment" },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-emerald-50/30 font-sans antialiased">
-      {/* Header / Nav - Enhanced Glassmorphism */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
+    <div
+      className={`${display.variable} ${body.variable} ${mono.variable} min-h-screen bg-[#F6F1E4] antialiased`}
+      style={{ fontFamily: "var(--font-body)" }}
+    >
+      <style jsx global>{`
+        .font-display {
+          font-family: var(--font-display), serif;
+        }
+        .font-mono-label {
+          font-family: var(--font-mono), monospace;
+        }
+
+        .reveal {
+          opacity: 0;
+          transform: translateY(18px);
+          transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal-in {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        @keyframes spin-slow {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 14s linear infinite;
+        }
+
+        @keyframes drift {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(-24px);
+          }
+        }
+        .animate-drift {
+          animation: drift 16s ease-in-out infinite;
+        }
+
+        @keyframes sprout-pop {
+          0% {
+            transform: scale(0.4);
+            opacity: 0;
+          }
+          70% {
+            transform: scale(1.15);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+        .sprout-pop {
+          animation: sprout-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        @keyframes seal-in {
+          0% {
+            transform: scale(0.85) rotate(-8deg);
+            opacity: 0;
+          }
+          100% {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+          }
+        }
+        .seal-in {
+          animation: seal-in 0.8s ease-out 0.15s both;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .reveal {
+            opacity: 1;
+            transform: none;
+            transition: none;
+          }
+          .animate-spin-slow,
+          .animate-drift,
+          .sprout-pop,
+          .seal-in {
+            animation: none !important;
+          }
+        }
+      `}</style>
+
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b border-[#221A10]/10 bg-[#F6F1E4]/90 backdrop-blur-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <div className="group relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-800 text-white font-bold shadow-lg shadow-emerald-600/20 transition-all hover:scale-105 hover:shadow-emerald-600/40">
-              AA
-              <div className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-white animate-pulse" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2A2015] text-[#F6F1E4]">
+              <Sprout className="h-5 w-5" />
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="font-bold tracking-tight text-zinc-900 text-sm sm:text-base">
-                Ashyfaam <span className="text-emerald-700">Agro-Vet</span>
+              <span className="font-display text-[15px] font-bold tracking-tight text-[#221A10] sm:text-base">
+                Ashyfaam <span className="italic text-[#5C7A40]">Agro-Vet</span>
               </span>
-              <span className="hidden sm:block text-[10px] font-medium text-zinc-500 tracking-wider uppercase">
-                ITF-NECA Training Partner
+              <span className="font-mono-label hidden text-[10px] tracking-[0.15em] text-[#6B5D45] sm:block">
+                ITF · NECA TRAINING PARTNER
               </span>
             </div>
           </div>
 
           <nav className="flex items-center gap-2 sm:gap-6">
             <Link
-              href="#about"
-              className="hidden sm:inline-flex items-center text-sm font-medium text-zinc-600 hover:text-emerald-700 transition-all hover:scale-105"
-            >
-              About
-            </Link>
-            <Link
               href="#requirements"
-              className="hidden sm:inline-flex items-center text-sm font-medium text-zinc-600 hover:text-emerald-700 transition-all hover:scale-105"
+              className="hidden text-sm font-medium text-[#4A3A24] transition-colors hover:text-[#5C7A40] sm:inline-flex"
             >
               Requirements
             </Link>
             <Link
               href="#apply"
-              className="group inline-flex h-9 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-emerald-600/25 transition-all hover:scale-105 hover:shadow-emerald-600/40 active:scale-95"
+              className="hidden text-sm font-medium text-[#4A3A24] transition-colors hover:text-[#5C7A40] sm:inline-flex"
             >
-              Apply Now
+              How to apply
+            </Link>
+            <Link
+              href="#apply"
+              className="group inline-flex h-9 items-center justify-center gap-2 rounded-full bg-[#5C7A40] px-5 py-2 text-sm font-semibold text-white shadow-md shadow-[#5C7A40]/25 transition-transform hover:scale-105 active:scale-95"
+            >
+              Apply now
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </nav>
         </div>
       </header>
 
-      {/* Hero Section - Enhanced */}
-      <section className="relative overflow-hidden py-20 sm:py-28 lg:py-32">
-        {/* Background Decor - Improved */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-emerald-300/20 blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-blue-300/20 blur-3xl animate-pulse" />
-          <div className="absolute top-1/2 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400/10 blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-teal-300/10 blur-3xl" />
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-[#2A2015] py-20 text-[#F6F1E4] sm:py-28">
+        {/* Contour-line texture */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.12]">
+          <svg
+            className="animate-drift h-full w-[130%]"
+            viewBox="0 0 1200 600"
+            preserveAspectRatio="none"
+            fill="none"
+          >
+            <path d="M-50 120 C 200 40, 400 200, 650 100 S 1100 60, 1300 140" stroke="#C9BC9A" strokeWidth="1.5" />
+            <path d="M-50 220 C 250 140, 420 300, 700 220 S 1050 180, 1300 260" stroke="#C9BC9A" strokeWidth="1.5" />
+            <path d="M-50 320 C 220 260, 460 400, 720 320 S 1080 280, 1300 360" stroke="#C9BC9A" strokeWidth="1.5" />
+            <path d="M-50 420 C 260 360, 440 500, 730 420 S 1090 380, 1300 460" stroke="#C9BC9A" strokeWidth="1.5" />
+          </svg>
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
+        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="flex flex-col justify-center space-y-8 text-center lg:text-left">
-              <Badge className="self-center lg:self-start w-fit gap-2 bg-emerald-100/80 text-emerald-800 hover:bg-emerald-100/80 border-emerald-600/20 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold">
-                <span className="flex h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
-                100% Free Training Project • ITF-NECA
-              </Badge>
-
-              <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl md:text-6xl lg:text-7xl">
-                Technical Skills{" "}
-                <br className="hidden sm:inline" />
-                <span className="relative inline-block">
-                  <span className="bg-gradient-to-r from-emerald-600 to-emerald-800 bg-clip-text text-transparent">
-                    Development Project
-                  </span>
-                  <Sparkles className="absolute -top-6 -right-8 h-5 w-5 text-emerald-400 animate-pulse" />
+              <div className="flex justify-center lg:justify-start">
+                <span className="font-mono-label inline-flex items-center gap-2 rounded-full border border-[#7C9A5C]/40 px-4 py-1.5 text-[11px] tracking-[0.15em] text-[#C7D6B5]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#7C9A5C]" />
+                  100% FREE PROGRAM · APPLICATIONS OPEN
                 </span>
+              </div>
+
+              <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
+                Technical skills, grown from
+                <br className="hidden sm:inline" />{" "}
+                <span className="italic text-[#9DB97F]">the ground up.</span>
               </h1>
 
-              <p className="mx-auto lg:mx-0 max-w-xl text-base text-zinc-600 sm:text-lg leading-relaxed">
-                In collaboration with{" "}
-                <strong className="text-emerald-800">
-                  Ashyfaam Agro Vet Services, Bauchi
+              <p className="mx-auto max-w-xl text-base leading-relaxed text-[#D8CFB9] sm:text-lg lg:mx-0">
+                In partnership with{" "}
+                <strong className="font-semibold text-[#F6F1E4]">
+                  Ashyfaam Agro-Vet Services, Bauchi
                 </strong>
-                , we are training young Nigerians on advanced agricultural
-                technical skills, animal health, and crop management.
+                , we're training young Nigerians in animal health, precision
+                agriculture and hands-on farm technical skills — four months,
+                fully free.
               </p>
 
-              <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+              <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
                 <Link
                   href="#apply"
-                  className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 px-8 text-sm font-semibold text-white shadow-lg shadow-emerald-600/30 transition-all hover:scale-105 hover:shadow-emerald-600/40 active:scale-95"
+                  className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#7C9A5C] px-8 text-sm font-semibold text-[#1B1608] shadow-lg shadow-[#7C9A5C]/25 transition-transform hover:scale-105 active:scale-95"
                 >
-                  Start Application
-                  <Sparkles className="h-4 w-4 transition-transform group-hover:rotate-12" />
+                  Start your application
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   href="#requirements"
-                  className="inline-flex h-12 items-center justify-center rounded-xl border border-zinc-200 bg-white/70 px-8 text-sm font-semibold text-zinc-700 shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:bg-white hover:shadow-md active:scale-95"
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-[#F6F1E4]/25 px-8 text-sm font-semibold text-[#F6F1E4] transition-colors hover:bg-[#F6F1E4]/10"
                 >
-                  View Requirements
+                  Check eligibility
                 </Link>
               </div>
 
-              {/* Trust Indicators - Enhanced */}
-              <div className="flex flex-wrap justify-center lg:justify-start gap-6 pt-4">
-                <div className="flex items-center gap-2 text-sm text-zinc-600">
-                  <div className="rounded-lg bg-emerald-100 p-1.5">
-                    <Clock className="h-4 w-4 text-emerald-600" />
-                  </div>
-                  <span className="font-medium">4 Months Program</span>
+              <div className="flex flex-wrap justify-center gap-6 pt-2 lg:justify-start">
+                <div className="flex items-center gap-2 text-sm text-[#C7BFA9]">
+                  <Clock className="h-4 w-4 text-[#7C9A5C]" />
+                  <span>4-month program</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-zinc-600">
-                  <div className="rounded-lg bg-emerald-100 p-1.5">
-                    <Users className="h-4 w-4 text-emerald-600" />
-                  </div>
-                  <span className="font-medium">Limited Slots</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-zinc-600">
-                  <div className="rounded-lg bg-emerald-100 p-1.5">
-                    <BookOpen className="h-4 w-4 text-emerald-600" />
-                  </div>
-                  <span className="font-medium">Hands-on Training</span>
+                <div className="flex items-center gap-2 text-sm text-[#C7BFA9]">
+                  <Users className="h-4 w-4 text-[#7C9A5C]" />
+                  <span>Limited slots</span>
                 </div>
               </div>
             </div>
 
-            {/* Visual Card - Enhanced */}
-            <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-emerald-500 to-teal-500 opacity-10 blur-2xl animate-pulse" />
-              <div className="relative rounded-3xl border border-white/20 bg-white/80 backdrop-blur-xl p-8 shadow-2xl transition-all hover:shadow-emerald-600/20">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-2.5 shadow-lg shadow-emerald-600/20">
-                    <Award className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-zinc-900">
-                      Course Highlights
-                    </h3>
-                    <p className="text-xs text-zinc-500">4-Month Intensive Program</p>
-                  </div>
+            {/* Signature: stamp + growth ledger */}
+            <div className="relative mx-auto flex w-full max-w-md flex-col items-center gap-10 lg:items-end">
+              <div className="seal-in relative h-32 w-32 shrink-0">
+                <div className="animate-spin-slow absolute inset-0 rounded-full border-2 border-dashed border-[#7C9A5C]/50" />
+                <div className="absolute inset-3 flex flex-col items-center justify-center rounded-full bg-[#3A2E1D] text-center">
+                  <Stamp className="h-6 w-6 text-[#9DB97F]" />
+                  <span className="font-mono-label mt-1 text-[9px] tracking-[0.1em] text-[#D8CFB9]">
+                    CERTIFIED
+                  </span>
                 </div>
+              </div>
 
-                <ul className="mt-6 space-y-4">
-                  {courseHighlights.map((item, idx) => (
-                    <li
-                      key={idx}
-                      className="group flex items-start gap-3 rounded-lg p-2 text-sm text-zinc-600 transition-all hover:bg-emerald-50/50 hover:text-zinc-900"
-                    >
-                      <div className="mt-0.5 rounded-full bg-emerald-100 p-0.5 transition-colors group-hover:bg-emerald-200">
-                        <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              <div className="w-full rounded-2xl border border-[#F6F1E4]/10 bg-[#3A2E1D]/60 p-6 backdrop-blur-sm">
+                <span className="font-mono-label text-[11px] tracking-[0.15em] text-[#9DB97F]">
+                  THE FOUR-MONTH JOURNEY
+                </span>
+                <div className="mt-5 space-y-5">
+                  {journey.map((step, idx) => (
+                    <div key={step.label} className="flex items-center gap-4">
+                      <div className="flex flex-col items-center">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#7C9A5C]/15 text-[#9DB97F]">
+                          <step.icon className="h-4 w-4" />
+                        </div>
+                        {idx < journey.length - 1 && (
+                          <span className="mt-1 h-6 w-px bg-[#F6F1E4]/15" />
+                        )}
                       </div>
-                      <span>{item}</span>
-                    </li>
+                      <div>
+                        <p className="font-display text-sm font-semibold text-[#F6F1E4]">
+                          {step.label}
+                        </p>
+                        <p className="text-xs text-[#B9AF96]">{step.note}</p>
+                      </div>
+                    </div>
                   ))}
-                </ul>
-
-                <div className="mt-6 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 p-3 text-center text-xs text-emerald-700 ring-1 ring-emerald-600/10">
-                  <Zap className="inline-block h-3.5 w-3.5 mr-1.5" />
-                  <span className="font-semibold">Limited Slots Available</span>{" "}
-                  — Apply Early!
                 </div>
               </div>
             </div>
@@ -252,78 +395,71 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section - New */}
-      <section className="py-16 bg-white/50 backdrop-blur-sm border-y border-zinc-100/50">
+      {/* Field notes / features */}
+      <section className="border-b border-[#221A10]/10 bg-[#F6F1E4] py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {features.map((feature, idx) => (
-              <div
-                key={idx}
-                className="group text-center p-6 rounded-2xl transition-all hover:bg-white hover:shadow-lg hover:scale-[1.02]"
-              >
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600 transition-all group-hover:from-emerald-500 group-hover:to-emerald-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-emerald-600/20">
-                  <feature.icon className="h-6 w-6" />
+              <Reveal key={feature.title} delay={idx * 120}>
+                <div
+                  className={`h-full rounded-2xl border border-[#221A10]/10 bg-white/60 p-6 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md ${feature.tilt}`}
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#7C9A5C]/15 text-[#5C7A40]">
+                    <feature.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-display text-lg font-semibold text-[#221A10]">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-[#5A4E3A]">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="mb-2 font-semibold text-zinc-900">
-                  {feature.title}
-                </h3>
-                <p className="text-sm text-zinc-500 leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Program Requirements - Enhanced Cards */}
-      <section
-        id="requirements"
-        className="py-20 sm:py-28 bg-gradient-to-b from-white to-zinc-50/80"
-      >
+      {/* Requirements — ledger */}
+      <section id="requirements" className="bg-[#F6F1E4] py-20 sm:py-28">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge className="mb-4 gap-2 bg-emerald-100/80 text-emerald-800 hover:bg-emerald-100/80 border-emerald-600/20">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Eligibility Criteria
-            </Badge>
-            <h2 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
-              Admission Requirements
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <span className="font-mono-label text-xs tracking-[0.2em] text-[#5C7A40]">
+              ELIGIBILITY LEDGER
+            </span>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-[#221A10] sm:text-4xl">
+              Admission requirements
             </h2>
-            <p className="mt-4 text-zinc-600 leading-relaxed">
-              Please review the entry prerequisites carefully before initiating
-              your digital application.
+            <p className="mt-4 leading-relaxed text-[#5A4E3A]">
+              Review each entry carefully before you begin your application.
             </p>
-          </div>
+          </Reveal>
 
-          <div className="mx-auto mt-12 max-w-4xl grid gap-6">
+          <div className="mx-auto mt-14 max-w-3xl divide-y divide-[#221A10]/10 rounded-2xl border border-[#221A10]/10 bg-white/50">
             {requirements.map((item, idx) => (
-              <div
-                key={idx}
-                className={`group rounded-2xl border ${item.border} bg-gradient-to-br ${item.gradient} p-6 backdrop-blur-sm transition-all hover:scale-[1.02] hover:shadow-xl sm:p-8`}
-              >
-                <div className="flex gap-5">
-                  <div className="shrink-0">
-                    <div className="rounded-xl bg-white/70 p-3 shadow-sm transition-all group-hover:shadow-md">
-                      <item.icon className="h-6 w-6 text-emerald-600" />
+              <Reveal key={item.code} delay={idx * 100}>
+                <div className="flex gap-5 p-6 sm:p-8">
+                  <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-center">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#2A2015] text-[#9DB97F]">
+                      <item.icon className="h-5 w-5" />
                     </div>
                   </div>
                   <div className="flex-1 space-y-2">
-                    <h4 className="font-semibold text-zinc-900 text-lg">
+                    <span className="font-mono-label text-[11px] tracking-[0.15em] text-[#8A7B5C]">
+                      {item.code}
+                    </span>
+                    <h4 className="font-display text-lg font-semibold text-[#221A10]">
                       {item.title}
                     </h4>
-                    <p className="text-sm text-zinc-600 leading-relaxed">
+                    <p className="text-sm leading-relaxed text-[#5A4E3A]">
                       {item.description}
                     </p>
                     {item.items && (
                       <ul className="mt-2 space-y-1.5">
-                        {item.items.map((listItem, listIdx) => (
-                          <li
-                            key={listIdx}
-                            className="flex items-center gap-2 text-sm text-zinc-600"
-                          >
-                            <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                            {listItem}
+                        {item.items.map((li) => (
+                          <li key={li} className="flex items-center gap-2 text-sm text-[#5A4E3A]">
+                            <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[#7C9A5C]" />
+                            {li}
                           </li>
                         ))}
                       </ul>
@@ -333,172 +469,147 @@ export default function Home() {
                         href={item.link.href}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 mt-2 text-sm font-medium text-emerald-700 transition-all hover:gap-3 hover:text-emerald-800"
+                        className="inline-flex items-center gap-1.5 pt-1 text-sm font-semibold text-[#5C7A40] transition-all hover:gap-2.5"
                       >
                         {item.link.text}
-                        <ExternalLink className="h-4 w-4" />
+                        <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     )}
                   </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Application Method - Enhanced Dark Section */}
-      <section
-        id="apply"
-        className="py-20 sm:py-28 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-white"
-      >
+      {/* Apply */}
+      <section id="apply" className="bg-[#2A2015] py-20 text-[#F6F1E4] sm:py-28">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl">
-            {/* Header Container */}
-            <div className="text-center mb-12">
-              <Badge className="mb-4 gap-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/10 border-emerald-500/20">
+            <Reveal className="mb-12 text-center">
+              <span className="font-mono-label inline-flex items-center gap-2 text-xs tracking-[0.2em] text-[#9DB97F]">
                 <Mail className="h-3.5 w-3.5" />
-                Apply Now
-              </Badge>
-              <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Method of Application
+                METHOD OF APPLICATION
+              </span>
+              <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+                Two ways to submit
               </h2>
-              <p className="mt-4 text-zinc-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-                Interested and eligible candidates have two methods of
-                submission. Ensure all credentials are ready before the deadline
-                on{" "}
-                <strong className="text-emerald-400">19 June, 2026</strong>.
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#C7BFA9] sm:text-base">
+                Have your credentials ready before the deadline on{" "}
+                <strong className="text-[#9DB97F]">19 June, 2026</strong>.
               </p>
-            </div>
+            </Reveal>
 
-            {/* Embedded Client-Side Form Wrapper */}
-            {/* <div className="max-w-xl mx-auto mb-16">
-              <ApplicationForm />
-            </div> */}
-
-            {/* Information Cards Powered by shadcn/ui */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {/* Card 01: Online Submission */}
-              <Card className="border-white/5 bg-white/5 backdrop-blur-sm transition-all hover:scale-[1.02] hover:bg-white/10 text-white shadow-xl">
-                <CardHeader>
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 font-bold text-white shadow-lg shadow-emerald-600/25">
-                    01
-                  </div>
-                  <CardTitle className="text-xl font-semibold text-white">
-                    Online Submission
-                  </CardTitle>
-                  <CardDescription className="text-zinc-400">
-                    Digital application process
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-sm text-zinc-400 leading-relaxed">
-                    Submit a handwritten application along with high-resolution
-                    scanned photocopies of your credentials directly to our
-                    official portal.
-                  </p>
-                  <div className="pt-6 border-t border-white/5">
-                    <span className="text-xs tracking-wider text-emerald-400 uppercase font-mono block">
-                      Portal URL
+              <Reveal delay={0}>
+                <Card className="h-full border-dashed border-[#F6F1E4]/20 bg-[#3A2E1D]/50 text-[#F6F1E4] shadow-none">
+                  <CardHeader>
+                    <span className="font-mono-label text-[11px] tracking-[0.15em] text-[#9DB97F]">
+                      PERMIT 01
                     </span>
-                    <span className="text-sm font-semibold text-white flex items-center gap-2">
-                      ashyfaamagrovetservices.org.ng
-                      <ExternalLink className="h-3.5 w-3.5 text-emerald-400" />
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Card 02: Physical Drop-off */}
-              <Card className="border-white/5 bg-white/5 backdrop-blur-sm transition-all hover:scale-[1.02] hover:bg-white/10 text-white shadow-xl">
-                <CardHeader>
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 font-bold text-white shadow-lg shadow-emerald-600/25">
-                    02
-                  </div>
-                  <CardTitle className="text-xl font-semibold text-white">
-                    Physical Drop-off
-                  </CardTitle>
-                  <CardDescription className="text-zinc-400">
-                    In-person submission
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <p className="text-sm text-zinc-400 leading-relaxed">
-                    Package your handwritten application and photocopies of your
-                    credentials in a sealed envelope and deliver directly to
-                    headquarters.
-                  </p>
-                  <div className="pt-6 border-t border-white/5 space-y-3">
-                    <div className="flex items-start gap-3 text-sm text-zinc-400">
-                      <div className="rounded-lg bg-emerald-500/10 p-1.5">
-                        <MapPin className="h-4 w-4 text-emerald-400" />
-                      </div>
-                      <span className="leading-relaxed">
-                        Ashyfaam Agro Vet Services
-                        <br />
-                        <span className="text-zinc-300">BSADP HQ, Bauchi</span>
+                    <CardTitle className="font-display text-xl font-semibold text-[#F6F1E4]">
+                      Online submission
+                    </CardTitle>
+                    <CardDescription className="text-[#B9AF96]">
+                      Digital application process
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <p className="text-sm leading-relaxed text-[#C7BFA9]">
+                      Submit a handwritten application with high-resolution
+                      scanned copies of your credentials through our official
+                      portal.
+                    </p>
+                    <div className="border-t border-[#F6F1E4]/10 pt-5">
+                      <span className="font-mono-label block text-[11px] tracking-[0.15em] text-[#9DB97F]">
+                        PORTAL URL
+                      </span>
+                      <span className="mt-1 flex items-center gap-2 text-sm font-semibold text-[#F6F1E4]">
+                        ashyfaamagrovetservices.org.ng
+                        <ExternalLink className="h-3.5 w-3.5 text-[#9DB97F]" />
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-zinc-400">
-                      <div className="rounded-lg bg-emerald-500/10 p-1.5">
-                        <Phone className="h-4 w-4 text-emerald-400" />
+                  </CardContent>
+                </Card>
+              </Reveal>
+
+              <Reveal delay={140}>
+                <Card className="h-full border-dashed border-[#F6F1E4]/20 bg-[#3A2E1D]/50 text-[#F6F1E4] shadow-none">
+                  <CardHeader>
+                    <span className="font-mono-label text-[11px] tracking-[0.15em] text-[#9DB97F]">
+                      PERMIT 02
+                    </span>
+                    <CardTitle className="font-display text-xl font-semibold text-[#F6F1E4]">
+                      Physical drop-off
+                    </CardTitle>
+                    <CardDescription className="text-[#B9AF96]">
+                      In-person submission
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <p className="text-sm leading-relaxed text-[#C7BFA9]">
+                      Package your handwritten application and credential
+                      copies in a sealed envelope and deliver to headquarters.
+                    </p>
+                    <div className="space-y-3 border-t border-[#F6F1E4]/10 pt-5">
+                      <div className="flex items-start gap-3 text-sm text-[#C7BFA9]">
+                        <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#9DB97F]" />
+                        <span className="leading-relaxed">
+                          Ashyfaam Agro Vet Services
+                          <br />
+                          <span className="text-[#F6F1E4]">BSADP HQ, Bauchi</span>
+                        </span>
                       </div>
-                      <span>+234 903 564 6765</span>
+                      <div className="flex items-center gap-3 text-sm text-[#C7BFA9]">
+                        <Phone className="h-4 w-4 text-[#9DB97F]" />
+                        <span>+234 903 564 6765</span>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Reveal>
             </div>
 
-            {/* Deadline Banner */}
-            <div className="mt-8 text-center">
-              <div className="inline-flex items-center gap-3 rounded-xl bg-emerald-500/10 px-6 py-3 ring-1 ring-emerald-500/20">
-                <Clock className="h-5 w-5 text-emerald-400" />
-                <span className="text-sm text-zinc-300">
-                  Application Deadline:{" "}
-                  <span className="font-semibold text-emerald-400">
-                    19 June, 2026
-                  </span>
+            <Reveal className="mt-8 text-center" delay={200}>
+              <div className="inline-flex items-center gap-3 rounded-full border border-[#9DB97F]/25 bg-[#9DB97F]/10 px-6 py-3">
+                <Clock className="h-4 w-4 text-[#9DB97F]" />
+                <span className="text-sm text-[#D8CFB9]">
+                  Application deadline:{" "}
+                  <span className="font-semibold text-[#9DB97F]">19 June, 2026</span>
                 </span>
               </div>
-            </div>
-            <div className="max-w-xl mt-10 mx-auto mb-10 flex justify-center">
+            </Reveal>
+
+            <div className="mx-auto mt-10 flex max-w-xl justify-center">
               <ApplicationModal />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer - Enhanced */}
-      <footer className="border-t border-zinc-200/50 bg-white/50 backdrop-blur-sm py-8">
-        <div className="container mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      {/* Footer */}
+      <footer className="border-t border-[#221A10]/10 bg-[#F6F1E4] py-8">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 sm:flex-row">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-700 text-white font-bold text-xs">
-              AA
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2A2015] text-[#F6F1E4]">
+              <Sprout className="h-3.5 w-3.5" />
             </div>
-            <p className="text-sm text-zinc-600">
+            <p className="text-sm text-[#5A4E3A]">
               &copy; 2026 Ashyfaam Agro Vet Services.
-              <span className="hidden sm:inline"> All Rights Reserved.</span>
+              <span className="hidden sm:inline"> All rights reserved.</span>
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm font-medium text-zinc-700">
-              <div className="rounded-lg bg-emerald-100 p-1.5">
-                <Phone className="h-3.5 w-3.5 text-emerald-600" />
-              </div>
+            <div className="flex items-center gap-2 text-sm font-medium text-[#221A10]">
+              <Phone className="h-3.5 w-3.5 text-[#5C7A40]" />
               <span>+234 903 564 6765</span>
             </div>
-            <div className="hidden sm:block h-4 w-px bg-zinc-300" />
-            <Link
-              href="#"
-              className="text-sm text-zinc-600 hover:text-emerald-700 transition-colors"
-            >
-              Privacy Policy
+            <div className="hidden h-4 w-px bg-[#221A10]/15 sm:block" />
+            <Link href="#" className="text-sm text-[#5A4E3A] transition-colors hover:text-[#5C7A40]">
+              Privacy policy
             </Link>
-            <Link
-              href="#"
-              className="text-sm text-zinc-600 hover:text-emerald-700 transition-colors"
-            >
+            <Link href="#" className="text-sm text-[#5A4E3A] transition-colors hover:text-[#5C7A40]">
               Terms
             </Link>
           </div>
