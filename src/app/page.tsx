@@ -556,7 +556,7 @@ export default function Home() {
                         MAILING ADDRESS
                       </span>
                       <span className="mt-1 flex items-center gap-2 text-sm font-semibold text-[#F6F1E4]">
-                        Ashyfaam Agro Vet Services
+                        ashyfaamagrovetservices@gmail.com
                         <ExternalLink className="h-3.5 w-3.5 text-[#9DB97F]" />
                       </span>
                     </div>
