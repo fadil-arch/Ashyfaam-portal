@@ -320,9 +320,8 @@ export default function Home() {
                 <strong className="font-semibold text-[#F6F1E4]">
                   Ashyfaam Agro-Vet Services, Bauchi
                 </strong>
-                , we're training young Nigerians in animal health, precision
-                agriculture and hands-on farm technical skills — four months,
-                fully free.
+                , we're training young Nigerians in animal health, crop production, precision
+                agriculture and hands-on farm technical skills.
               </p>
 
               <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
@@ -493,7 +492,7 @@ export default function Home() {
                 METHOD OF APPLICATION
               </span>
               <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-                Two ways to submit
+                <span className="text-[#9DB97F]">3</span> ways to submit
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#C7BFA9] sm:text-base">
                 Have your credentials ready before the deadline on{" "}
@@ -533,12 +532,43 @@ export default function Home() {
                   </CardContent>
                 </Card>
               </Reveal>
-
+              
               <Reveal delay={140}>
                 <Card className="h-full border-dashed border-[#F6F1E4]/20 bg-[#3A2E1D]/50 text-[#F6F1E4] shadow-none">
                   <CardHeader>
                     <span className="font-mono-label text-[11px] tracking-[0.15em] text-[#9DB97F]">
                       PERMIT 02
+                    </span>
+                    <CardTitle className="font-display text-xl font-semibold text-[#F6F1E4]">
+                      Mail submission
+                    </CardTitle>
+                    <CardDescription className="text-[#B9AF96]">
+                      Postal application process
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <p className="text-sm leading-relaxed text-[#C7BFA9]">
+                      Send a handwritten application with photocopies of your
+                      credentials to our mailing address.
+                    </p>
+                    <div className="border-t border-[#F6F1E4]/10 pt-5">
+                      <span className="font-mono-label block text-[11px] tracking-[0.15em] text-[#9DB97F]">
+                        MAILING ADDRESS
+                      </span>
+                      <span className="mt-1 flex items-center gap-2 text-sm font-semibold text-[#F6F1E4]">
+                        Ashyfaam Agro Vet Services
+                        <ExternalLink className="h-3.5 w-3.5 text-[#9DB97F]" />
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Reveal>
+
+              <Reveal delay={140}>
+                <Card className="h-full border-dashed border-[#F6F1E4]/20 bg-[#3A2E1D]/50 text-[#F6F1E4] shadow-none">
+                  <CardHeader>
+                    <span className="font-mono-label text-[11px] tracking-[0.15em] text-[#9DB97F]">
+                      PERMIT 03
                     </span>
                     <CardTitle className="font-display text-xl font-semibold text-[#F6F1E4]">
                       Physical drop-off
