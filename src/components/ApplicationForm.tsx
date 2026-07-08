@@ -34,7 +34,8 @@ interface Course {
 }
 
 // Constants
-const RECIPIENT_EMAIL = "salihu.ismail1@icloud.com";
+// const RECIPIENT_EMAIL = "salihu.ismail1@icloud.com";
+const RECIPIENT_EMAIL = "ashyfaamagrovetservices@gmail.com";
 
 const TRAINING_COURSES: Course[] = [
   { value: "crop_production", label: "Crop Production" },
@@ -165,7 +166,7 @@ export default function ApplicationForm(): React.ReactElement {
                 <Label htmlFor="fullName">Full Name</Label>
                 <Input
                   id="fullName"
-                  placeholder="John Doe"
+                  placeholder="Fadil Salihu"
                   {...register("fullName", { required: "Full name is mandatory" })}
                 />
                 {errors.fullName && <p className="text-xs text-rose-600">{errors.fullName.message}</p>}
@@ -177,7 +178,7 @@ export default function ApplicationForm(): React.ReactElement {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="john@example.com"
+                    placeholder="user@example.com"
                     {...register("email", {
                       required: "Valid email is required",
                       pattern: {

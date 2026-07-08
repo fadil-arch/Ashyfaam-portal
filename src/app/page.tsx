@@ -136,6 +136,10 @@ export default function Home() {
       title: "Mandatory Prerequisite Course",
       description:
         "Must have completed the AI Fluency Course on the International Organisation of Employers (IOE) Learning Platform.",
+      items: [
+        "AI Fluency Course Certificate",
+        "Excellence in numerical, reasoning and fluency in communication",
+      ],
       link: {
         href: "https://bit.ly/IOE-NECA-AI-FLUENCY",
         text: "Complete AI Fluency Course",
